@@ -1,0 +1,10 @@
+# PyCharm 配置文件
+.idea/
+*.iml
+*.ipr
+*.iws
+*.ids
+*.orig
+*.swp
+*.swo
+~$*
