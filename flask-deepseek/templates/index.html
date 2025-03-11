@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>智能问答系统</title>
+    <style>
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        #answer {
+            border: 1px solid #ccc;
+            min-height: 150px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>智能问答系统</h1>
+        <form onsubmit="return submitQuestion(event)">
+            <input type="text" id="question" placeholder="输入您的问题..." style="width: 70%">
+            <button type="submit">提问</button>
+        </form>
+        <div id="answer"></div>
+    </div>
+
+    <script>
+        const answerDiv = document.getElementById('answer');
+
+        function submitQuestion(e) {
+            e.preventDefault();
+            const question = document.getElementById('question').value;
+            answerDiv.innerHTML = '';
+
+            const eventSource = new EventSource(`/ask?question=${encodeURIComponent(question)}`);
+
+            eventSource.onmessage = (event) => {
+                if (event.data === '[DONE]') {
+                    eventSource.close();
+                    return;
+                }
+                answerDiv.innerHTML += event.data.replace(/\n/g, '<br>');
+            };
+
+            eventSource.onerror = (err) => {
+                console.error('EventSource error:', err);
+                eventSource.close();
+            };
+        }
+    </script>
+</body>
+</html>
